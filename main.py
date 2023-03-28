@@ -47,8 +47,13 @@ def get_default_CIDR(ip):
 
 
 def get_host_amount(amount):
-
     return ((2 ** (math.ceil(math.log(amount + 2, 2)))) - 2)
+
+
+def get_nub_of_subnets(amount, cidr):
+    x = ((math.ceil(math.log(amount + 2, 2))))
+    y = 2 ** ((32 - x) - cidr )
+    return y
 
 
 def to_binary(str):
@@ -75,6 +80,7 @@ def main():
         amount = int(input("How many? "))
         if choise == 'H':
             print(get_host_amount(amount))
+            print(get_nub_of_subnets(amount, cidr))
         elif choise == 'S':
             pass
         # 2^(choise +2 => log(2))
