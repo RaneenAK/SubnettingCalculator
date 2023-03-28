@@ -73,6 +73,11 @@ def get_nub_of_subnets(amount, cidr):
     y = 2 ** ((32 - x) - cidr )
     return y
 
+def get_subnet_amount(amount, cidr):
+    z = (int(math.log(amount, 2)))
+    return (2 ** (32-cidr-z)-2)
+
+
 
 def to_binary(str):
     binary_ip = '.'.join([bin(int(x) + 256)[3:] for x in str.split('.')])  # ip to binary ip
@@ -105,7 +110,11 @@ def main():
                 print("number of hosts", get_host_amount(amount))
                 print("number of subnets", get_nub_of_subnets(amount, cidr))
         elif choise == 'S':
-            pass
+            if amount > 1 and cidr == 32:
+                print("too many subnets required")
+            else:
+                print("number of hosts", get_subnet_amount(amount, cidr))
+                print("number of subnets", amount)
         # 2^(choise +2 => log(2))
 
 
