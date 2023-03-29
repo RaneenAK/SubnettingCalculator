@@ -12,11 +12,29 @@ def ip_input_and_validation(ip):
         print("Invalid IP given, retry")
         return bool(match)
 
-
 def CIDR_input():
     cidr = input("Give CIDR: ")
+    ip = "192.168.0.1"
+    octets = ip.split('.')
+
+    first_octet = octets[0]
+    second_octet = octets[1]
+    third_octet = octets[2]
+    forth_octet = octets[3]
+
+    #print(first_octet)
     if cidr == '':
-        return False
+        if 0 < int(first_octet) < 128:
+            cidr = 8
+            return cidr
+        elif 128 <= int(first_octet) < 191:
+            cidr = 16
+            return cidr
+        elif 192 <= int(first_octet) < 224:
+            cidr = 24
+            return cidr
+        else:
+            return False
 
     elif int(cidr) > 0 and int(cidr) <= 32:
         return int(cidr)
@@ -55,6 +73,15 @@ def get_nub_of_subnets(amount, cidr):
     y = 2 ** ((32 - x) - cidr )
     return y
 
+def get_subnet_amount(amount, cidr):
+    z = (int(math.log(amount, 2)))
+    return (2 ** (32-cidr-z)-2)
+
+def find_first_sunbet(amount, cidr):
+    z = (int(math.log(amount, 2)))
+    return (2 ** (32-cidr-z)-2)
+
+
 
 def to_binary(str):
     binary_ip = '.'.join([bin(int(x) + 256)[3:] for x in str.split('.')])  # ip to binary ip
@@ -71,19 +98,31 @@ def main():
     third_octet = octets[2]
     forth_octet = octets[3]
 
+
     if ip_input_and_validation(ip):
         cidr = CIDR_input()
 
         print(get_subnet_mask(cidr))
         print(to_binary(get_subnet_mask(cidr)))
         choise = input("Will the partitioning be according to number of hosts or number of subnets? (H/S)")
-        amount = int(input("How many? "))
         if choise == 'H':
-            print(get_host_amount(amount))
-            print(get_nub_of_subnets(amount, cidr))
+            amount = int(input("How many hosts? "))
+            if amount>2**(32-cidr)-2:
+                print("too many hosts for given subnet")
+            else:
+                print("number of hosts", get_host_amount(amount))
+                print("number of subnets", get_nub_of_subnets(amount, cidr))
         elif choise == 'S':
-            pass
-        # 2^(choise +2 => log(2))
+            amount = int(input("How many subnets? "))
+            if cidr == 32:
+                print("Can't split the network")
+            else:
+                print("number of hosts", get_subnet_amount(amount, cidr))
+                print("number of subnets", amount)
+        else:
+            #choise != "H" or choise != "S":
+                print("wrong value was entered")
+
 
 
 if __name__ == "__main__":
