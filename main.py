@@ -77,6 +77,10 @@ def get_subnet_amount(amount, cidr):
     z = (int(math.log(amount, 2)))
     return (2 ** (32-cidr-z)-2)
 
+def find_first_sunbet(amount, cidr):
+    z = (int(math.log(amount, 2)))
+    return (2 ** (32-cidr-z)-2)
+
 
 
 def to_binary(str):
@@ -101,21 +105,24 @@ def main():
         print(get_subnet_mask(cidr))
         print(to_binary(get_subnet_mask(cidr)))
         choise = input("Will the partitioning be according to number of hosts or number of subnets? (H/S)")
-        amount = int(input("How many? "))
         if choise == 'H':
-            if amount>2**(32-cidr):
+            amount = int(input("How many hosts? "))
+            if amount>2**(32-cidr)-2:
                 print("too many hosts for given subnet")
-                print(cidr)
             else:
                 print("number of hosts", get_host_amount(amount))
                 print("number of subnets", get_nub_of_subnets(amount, cidr))
         elif choise == 'S':
-            if amount > 1 and cidr == 32:
-                print("too many subnets required")
+            amount = int(input("How many subnets? "))
+            if cidr == 32:
+                print("Can't split the network")
             else:
                 print("number of hosts", get_subnet_amount(amount, cidr))
                 print("number of subnets", amount)
-        # 2^(choise +2 => log(2))
+        else:
+            #choise != "H" or choise != "S":
+                print("wrong value was entered")
+
 
 
 if __name__ == "__main__":
