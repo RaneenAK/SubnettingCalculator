@@ -125,6 +125,40 @@ def get_network1(ip,choise, amount, cidr):
         network = str(octet1)+".0.0.0"
     return network
 
+def get_network2(ip,choise, amount, cidr):
+    #change cidr to subnet mask
+    if amount ==1:
+        return ("subnet wasn't splited, hence there is no 2nd subnet")
+    octets = ip.split('.')
+    if choise == 'H':
+        bitsForHosts = (math.ceil(math.log(amount + 2, 2)))
+        bitsForSubnets = 32 - cidr - bitsForHosts
+    elif choise == 'S':
+        bitsForSubnets = ((math.ceil(math.log(amount, 2))))
+        bitsForHosts = 32 - cidr - bitsForSubnets
+    new_cidr=cidr+bitsForSubnets
+    if new_cidr > 24:
+        x = int(octets[3]) / (2 ** (32-new_cidr))
+        y = math.floor(x)
+        octet4 = (y * (2 ** (32-new_cidr))+(2 ** (32-new_cidr)))
+        network = octets[0]+"."+octets[1]+"."+octets[2]+"."+str(octet4)
+    elif new_cidr > 16:
+        x = int(octets[2]) / (2 ** (24-new_cidr))
+        y = math.floor(x)
+        octet3 = (y * (2 ** (24-new_cidr))+(2 ** (24-new_cidr)))
+        network = octets[0]+"."+octets[1]+"."+str(octet3)+".0"
+    elif new_cidr > 8:
+        x = int(octets[1]) / (2 ** (16 - new_cidr))
+        y = math.floor(x)
+        octet2 = (y * (2 ** (16 - new_cidr)))+(2 ** (16 - new_cidr))
+        network = octets[0]+"."+str(octet2)+".0.0"
+    else:
+        x = int(octets[0]) / (2 ** (8 - new_cidr))
+        y = math.floor(x)
+        octet1 = (y * (2 ** (8 - new_cidr)))+(8 - new_cidr)
+        network = str(octet1)+".0.0.0"
+    return network
+
 def get_broadcast1(ip,choise, amount, cidr):
     #change cidr to subnet mask
     octets = ip.split('.')
@@ -154,6 +188,38 @@ def get_broadcast1(ip,choise, amount, cidr):
         x = int(octets[0]) / (2 ** (8 - new_cidr))
         y = math.floor(x)
         octet1 = (y * (2 ** (8 - new_cidr))+(2 ** (8 -new_cidr)-1))
+        broadcast = str(octet1)+".255.255.255"
+    return broadcast
+
+def get_broadcast2(ip,choise, amount, cidr):
+    #change cidr to subnet mask
+    octets = ip.split('.')
+    if choise == 'H':
+        bitsForHosts = (math.ceil(math.log(amount + 2, 2)))
+        bitsForSubnets = 32 - cidr - bitsForHosts
+    elif choise == 'S':
+        bitsForSubnets = ((math.ceil(math.log(amount, 2))))
+        bitsForHosts = 32 - cidr - bitsForSubnets
+    new_cidr=cidr+bitsForSubnets
+    if new_cidr > 24:
+        x = int(octets[3]) / (2 ** (32-new_cidr))
+        y = math.floor(x)
+        octet4 = (y * (2 ** (32-new_cidr))+(2 ** (32-new_cidr)-1))+(2 ** (32-new_cidr))
+        broadcast = octets[0]+"."+octets[1]+"."+octets[2]+"."+str(octet4)
+    elif new_cidr > 16:
+        x = int(octets[2]) / (2 ** (24-new_cidr))
+        y = math.floor(x)
+        octet3 = (y * (2 ** (24-new_cidr))+(2 ** (24-new_cidr)-1))++(2 ** (24-new_cidr))
+        broadcast = octets[0]+"."+octets[1]+"."+str(octet3)+".255"
+    elif new_cidr > 8:
+        x = int(octets[1]) / (2 ** (16 - new_cidr))
+        y = math.floor(x)
+        octet2 = (y * (2 ** (16 - new_cidr))+(2 ** (16 -new_cidr)-1))+(2 ** (16 -new_cidr))
+        broadcast = octets[0]+"."+str(octet2)+".255.255"
+    else:
+        x = int(octets[0]) / (2 ** (8 - new_cidr))
+        y = math.floor(x)
+        octet1 = (y * (2 ** (8 - new_cidr))+(2 ** (8 -new_cidr)-1))+(2 ** (8 -new_cidr))
         broadcast = str(octet1)+".255.255.255"
     return broadcast
 
@@ -194,7 +260,9 @@ def main():
         else:
                 print("wrong value was entered")
     print("Output #5 - 1st network",get_network1(ip,choise, amount, cidr))
+    print("Output #5 - 2nd network",get_network2(ip,choise, amount, cidr))
     print("Output #5 - 1st broadcast",get_broadcast1(ip,choise, amount, cidr))
+    print("Output #5 - 2nd broadcast",get_broadcast2(ip,choise, amount, cidr))
 
 
 if __name__ == "__main__":
